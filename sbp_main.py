@@ -68,7 +68,7 @@ def cmd_vel_listener():
 def fan_vel_callback(data):
     global vel_fan
     vel_fan = data.data
-    print("Fan: %f" % vel_fan)
+    print("Fan: %f\r\n" % vel_fan)
 
 def fan_vel_listener():
     global fanSubscriber
@@ -277,7 +277,7 @@ if __name__ == "__main__":
                 time_past = time.time() - time_init
 
                 command_lock.acquire()
-                left_val = -int(300*(-vel_spatial - vel_angular))
+                left_val = int(300*(-vel_spatial - vel_angular))
                 right_val = int(300*(vel_spatial - vel_angular))
                 command_lock.release()
 
