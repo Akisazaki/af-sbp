@@ -68,11 +68,11 @@ def cmd_vel_listener():
 def fan_vel_callback(data):
     global vel_fan
     vel_fan = data.data
-    print("Fan: {10.1f}".format(vel_fan))
+    print("Fan: %f" % vel_fan)
 
 def fan_vel_listener():
     global fanSubscriber
-    fanSubscriber = rospy.Subscriber("fan_vel", Float32, callback=fan_vel_callback, queue_size=1)
+    fanSubscriber = rospy.Subscriber("fan_vel", Float32, callback=fan_vel_callback, queue_size=3)
 
 
 def init_listener():
