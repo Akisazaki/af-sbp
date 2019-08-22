@@ -17,7 +17,7 @@ import serial
 
 import parameter
 import controller
-
+from utils import getch
 
 arming_flag = False
 exit_flag = False
@@ -77,7 +77,7 @@ def fan_vel_listener():
 def init_listener():
     rospy.init_node('motor_controllers', anonymous=False)
     cmd_vel_listener()
-    fan_listener()
+    fan_vel_listener()
 
 def stop_listener():
     if None != cmdSubscriber:
@@ -196,7 +196,7 @@ class Key(threading.Thread):
             # time_past = time.time()- self.time_init
             # if time_past >10:
             # 	arming_flag = False
-            ch = command.getch()
+            ch = getch()
 
             if ch == 'q':
                 arming_flag = False
@@ -225,7 +225,7 @@ if __name__ == "__main__":
         driving_controller = controller.Controller(port, controller.TYPE_DEV_DRV)
         fan_controller = controller.Controller(port, controller.TYPE_DEV_FAN)
         init_listener()
-        set_key = key(0.005)
+        set_key = Key(0.005)
 
         # observer_thread = Subscriber(1, "observer", driving_controller, 0.5)
         controller_thread = Publisher(2, "controller", driving_controller, 0.5)
@@ -316,10 +316,12 @@ if __name__ == "__main__":
 
                     break
 
-        except:
+        except Exception as err1:
             print ("Error: unable to start thread")
+            print (err1)
         
         stop_listener()
 
-    except:
+    except Exception as err2:
         print ("Error: unable to generate thread")
+        print (err2)
