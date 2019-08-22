@@ -68,6 +68,7 @@ def cmd_vel_listener():
 def fan_vel_callback(data):
     global vel_fan
     vel_fan = data
+    print("Fan: %f" % vel_fan)
 
 def fan_vel_listener():
     global fanSubscriber
@@ -276,7 +277,7 @@ if __name__ == "__main__":
                 time_past = time.time() - time_init
 
                 command_lock.acquire()
-                left_val = int(300*(-vel_spatial - vel_angular))
+                left_val = int(300*(vel_spatial - vel_angular))
                 right_val = int(300*(vel_spatial - vel_angular))
                 command_lock.release()
 
@@ -292,7 +293,7 @@ if __name__ == "__main__":
                 elif 1.0 <= vel_fan:
                     fan_val = parameter.FAN_MAX + parameter.FAN_OFFSET
                 else:
-                    fan_val = int((parameter.FAN_MAX - parameter.FAN_MIN) * fan_val + parameter.FAN_MIN + parameter.FAN_OFFSET)
+                    fan_val = int((parameter.FAN_MAX - parameter.FAN_MIN) * vel_fan + parameter.FAN_MIN + parameter.FAN_OFFSET)
                 command_lock.release()
 
                 control_lock.acquire()
