@@ -96,7 +96,7 @@ class Controller:
         returns:
             bool [success]
         '''
-        self.str_command = self.pack(self.key_enable, (1, 1))
+        self.str_command = pack(self.key_enable, (1, 1))
         if self.port.isOpen():
             self.port.write(self.str_command)
             self.str_command = ''

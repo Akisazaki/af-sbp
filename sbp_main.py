@@ -80,6 +80,8 @@ def init_listener():
     fan_vel_listener()
 
 def stop_listener():
+    global cmdSubscriber
+    global fanSubscriber
     if None != cmdSubscriber:
         cmdSubscriber.unregister()
         cmdSubscriber = None
