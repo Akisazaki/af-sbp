@@ -75,6 +75,7 @@ class Controller:
             Controller
         '''
         self.port = port
+        self.tup_reference = (0, 0)
         if dev_type == TYPE_DEV_DRV:
             self.key_enable = parameter.MSG_DRV_ENABLE
             self.key_control = parameter.MSG_DRV_CONTROL
