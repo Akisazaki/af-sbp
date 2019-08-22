@@ -72,7 +72,7 @@ def fan_vel_callback(data):
 
 def fan_vel_listener():
     global fanSubscriber
-    fanSubscriber = rospy.Subscriber("fan_vel", Float32, callback=fan_vel_callback, queue_size=3)
+    fanSubscriber = rospy.Subscriber("fan_vel", Float32, callback=fan_vel_callback, queue_size=1)
 
 
 def init_listener():
