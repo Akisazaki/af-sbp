@@ -67,8 +67,8 @@ def cmd_vel_listener():
 
 def fan_vel_callback(data):
     global vel_fan
-    vel_fan = float(data)
-    print("Fan: %f" % vel_fan)
+    vel_fan = data * 1.0
+    print("Fan: {10.1f}".format(vel_fan))
 
 def fan_vel_listener():
     global fanSubscriber
