@@ -277,8 +277,8 @@ if __name__ == "__main__":
                 time_past = time.time() - time_init
 
                 command_lock.acquire()
-                left_val = int(300*(-vel_spatial - vel_angular))
-                right_val = int(300*(vel_spatial - vel_angular))
+                left_val = int(300*(-vel_spatial + vel_angular))
+                right_val = int(300*(vel_spatial + vel_angular))
                 command_lock.release()
 
                 control_lock.acquire()
