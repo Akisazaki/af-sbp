@@ -67,7 +67,7 @@ def cmd_vel_listener():
 
 def fan_vel_callback(data):
     global vel_fan
-    vel_fan = data
+    vel_fan = data.item()
     print("Fan: %f" % vel_fan)
 
 def fan_vel_listener():
