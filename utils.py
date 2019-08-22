@@ -3,9 +3,9 @@ import tty
 import termios
 
 def getch():
-    """
-    Get single character from standard input stream
-    """
+	"""
+	Get single character from standard input stream
+	"""
 
 	fd = sys.stdin.fileno()
 	old_settings = termios.tcgetattr(fd)
