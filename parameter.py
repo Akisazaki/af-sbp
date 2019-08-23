@@ -67,5 +67,5 @@ DRV_MIN = -150
 
 ## Fan Command Parameter ##
 FAN_OFFSET = 0
-FAN_MAX = 150
+FAN_MAX = 180
 FAN_MIN = 30

@@ -292,9 +292,9 @@ if __name__ == "__main__":
                 if 0.0 >= vel_fan:
                     fan_val = 0
                 elif 1.0 <= vel_fan:
-                    fan_val = parameter.FAN_MAX + parameter.FAN_OFFSET
+                    fan_val = parameter.FAN_MAX
                 else:
-                    fan_val = int((parameter.FAN_MAX - parameter.FAN_MIN) * vel_fan + parameter.FAN_MIN + parameter.FAN_OFFSET)
+                    fan_val = max(parameter.FAN_MIN, int(parameter.FAN_MAX * vel_fan))
                 command_lock.release()
 
                 control_lock.acquire()
