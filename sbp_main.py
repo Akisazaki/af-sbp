@@ -272,6 +272,7 @@ if __name__ == "__main__":
             
             fan_controller.control()
             time.sleep(5.0e-2)
+            fan_val = 0
 
             while True:
                 time_past = time.time() - time_init
@@ -288,7 +289,7 @@ if __name__ == "__main__":
                 time.sleep(5.0e-2)
 
                 command_lock.acquire()
-                if 0.0 <= vel_fan:
+                if 0.0 >= vel_fan:
                     fan_val = 0
                 elif 1.0 <= vel_fan:
                     fan_val = parameter.FAN_MAX + parameter.FAN_OFFSET
