@@ -56,6 +56,7 @@ def cmd_vel_callback(data):
     # rospy.loginfo(rospy.get_caller_id() + " I heard %s", data.linear.x)
     vel_spatial = data.linear.x
     vel_angular = data.angular.z
+    print("Cmd: %f %f\r\n" % (vel_spatial, vel_angular))
 
 
 def cmd_vel_listener():
