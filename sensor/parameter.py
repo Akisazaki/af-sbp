@@ -18,14 +18,16 @@ Description
 '''
 
 ## Message
-SONAR_FRAME_ID = "base_sonar"
-SONAR_FRAME_ID2 = "base_sonar2"
+SONAR_T_FRAME_ID = "base_sonar_top"
+SONAR_B_FRAME_ID = "base_sonar_bottom"
 IMU_FRAME_ID = "link_imu"
 
 ## Sonar
 SONAR_FIELD_OF_VIEW = 0.261799 # 15 degrees
-SONAR_MIN_RANGE = 0.02
-SONAR_MAX_RANGE = 4.0
+SONAR_T_MIN_RANGE = 0.03
+SONAR_B_MIN_RANGE = 0.03
+SONAR_T_MAX_RANGE = 1.0
+SONAR_B_MAX_RANGE = 0.15
 
 ## Serial Communication Parameter ##
 
@@ -55,6 +57,8 @@ MSG_LENGTH = 9  # 5 + MSG_DEV_NUMBER * MSG_RESOLUTION
 
 # tb0|4132q
 
+
+IMU_IGNORE_COUNT = 50
 
 
 # Covarience

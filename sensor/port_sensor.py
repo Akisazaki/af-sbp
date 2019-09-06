@@ -145,6 +145,8 @@ def on_imu(qx,qy,qz,qw, gx,gy,gz, ax,ay,az):
     global imu_seq
 
     imu_seq += 1
+    if imu_seq < parameter.IMU_IGNORE_COUNT:
+        return
 
     msg = Imu()
     
@@ -180,19 +182,21 @@ def on_sonar(id, range):
     msg = Range()
     msg.header.stamp = rospy.Time.now()
     msg.field_of_view = parameter.SONAR_FIELD_OF_VIEW
-    msg.min_range = parameter.SONAR_MIN_RANGE
-    msg.max_range = parameter.SONAR_MAX_RANGE
     msg.range = range
     if id == 0:
         sonar_seq += 1
         msg.header.seq = sonar_seq
-        msg.header.frame_id = parameter.SONAR_FRAME_ID
+        msg.header.frame_id = parameter.SONAR_T_FRAME_ID
+        msg.min_range = parameter.SONAR_T_MIN_RANGE
+        msg.max_range = parameter.SONAR_T_MAX_RANGE
         sonar_pub.publish(msg)
 
     else:
         sonar1_seq += 1
         msg.header.seq = sonar1_seq
-        msg.header.frame_id = parameter.SONAR_FRAME_ID2
+        msg.header.frame_id = parameter.SONAR_B_FRAME_ID
+        msg.min_range = parameter.SONAR_B_MIN_RANGE
+        msg.max_range = parameter.SONAR_B_MAX_RANGE
         sonar1_pub.publish(msg)
 
 def on_dust(id, value):

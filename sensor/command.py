@@ -177,25 +177,29 @@ class controller:
 		if input length is bigger then twice of MSG_LENGTH will return and finish.
 		'''
 		while SER.isOpen():
-			ch = SER.read()
-			ch.strip()
-			if len(ch) > 0:
-				if ch == parameter.MSG_IMU:
-					self.readIMU()
-				elif ch == parameter.MSG_START:
-					self.srt_received = ch
-				elif ch == parameter.MSG_END:
-					out = self.srt_received + ch
-					self.srt_received = ""
-					return out
-				else:
-					length = len(self.srt_received)
-					if length > parameter.MSG_LENGTH * 2:
-						out = self.srt_received
+			try:
+				ch = SER.read()
+				ch.strip()
+				if len(ch) > 0:
+					if ch == parameter.MSG_IMU:
+						self.readIMU()
+					elif ch == parameter.MSG_START:
+						self.srt_received = ch
+					elif ch == parameter.MSG_END:
+						out = self.srt_received + ch
 						self.srt_received = ""
 						return out
-					elif length > 0:
-						self.srt_received += ch
+					else:
+						length = len(self.srt_received)
+						if length > parameter.MSG_LENGTH * 2:
+							out = self.srt_received
+							self.srt_received = ""
+							return out
+						elif length > 0:
+							self.srt_received += ch
+			except ValueError as ve:
+				print "Ignore uncompletable input %s, error: %s" % (self.srt_received, ve)
+				self.srt_received = ""
 			time.sleep(0.001)
 
 	# def readLine(self):
