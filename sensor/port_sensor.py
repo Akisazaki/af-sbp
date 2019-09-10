@@ -181,12 +181,12 @@ def on_sonar(id, range):
     
     msg = Range()
     msg.header.stamp = rospy.Time.now()
-    msg.field_of_view = parameter.SONAR_FIELD_OF_VIEW
     msg.range = range
     if id == 0:
         sonar_seq += 1
         msg.header.seq = sonar_seq
         msg.header.frame_id = parameter.SONAR_T_FRAME_ID
+        msg.field_of_view = parameter.SONAR_T_FIELD_OF_VIEW
         msg.min_range = parameter.SONAR_T_MIN_RANGE
         msg.max_range = parameter.SONAR_T_MAX_RANGE
         sonar_pub.publish(msg)
@@ -195,13 +195,16 @@ def on_sonar(id, range):
         sonar1_seq += 1
         msg.header.seq = sonar1_seq
         msg.header.frame_id = parameter.SONAR_B_FRAME_ID
+        msg.field_of_view = parameter.SONAR_B_FIELD_OF_VIEW
         msg.min_range = parameter.SONAR_B_MIN_RANGE
         msg.max_range = parameter.SONAR_B_MAX_RANGE
         sonar1_pub.publish(msg)
 
 def on_dust(id, value):
     global dust_pub
-    dust_pub.publish(value)
+    dust = Float32()
+    dust.data = value
+    dust_pub.publish(dust)
 
 def _on_receive(subscriber):
     global sonar_pub
