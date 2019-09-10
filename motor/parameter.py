@@ -24,7 +24,13 @@ Description
 # Communication Configuration
 SER_BAUDRATE = 115200
 # SER_DEVICE = "/dev/tty.SLAB_USBtoUART"
+
+## IF RASPBERRY_PI
+# SER_DEV_DRV = "/dev/ttyUSB0"
+## ELSE
 SER_DEV_DRV = "/dev/ttyUSB1"
+## END_IF
+
 SER_DEV_FAN = "/dev/ttyUSB0"
 
 SER_DRV_FAN = "/dev/ttyUSB0"

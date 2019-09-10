@@ -35,8 +35,13 @@ SONAR_B_MAX_RANGE = 0.15
 
 # Communication Configuration
 SER_BAUDRATE = 115200
+
+## IF RASPBERRY_PI
 # SER_DEVICE = "/dev/ttyAMA0"
+## ELSE
 SER_DEVICE = "/dev/ttyUSB1"
+## END_IF
+
 SER_TIMEOUT = 0.1
 
 # Communication Protocol
