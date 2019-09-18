@@ -32,7 +32,7 @@ vel_left = 0
 vel_right = 0
 vel_fan = 0.0
 
-WHEEL_CIRCUMFERENCE = WHEEL_RADIUS * 2.0 * math.pi
+WHEEL_CIRCUMFERENCE = parameter.WHEEL_RADIUS * 2.0 * math.pi
 WHEEL_ARC_PER_DEGREE = WHEEL_CIRCUMFERENCE / 360.0
 INV_WHEEL_ARC_PER_DEGREE = 1.0 / WHEEL_ARC_PER_DEGREE
 # DRONE_CIRCUMFERENCE = WHEEL_DISTANCE * math.pi
@@ -58,7 +58,7 @@ def angular2mps(angularPerSec):
     return:
         [float] meterPerSec
     '''
-    return angularPerSec * WHEEL_DISTANCE
+    return angularPerSec * parameter.WHEEL_DISTANCE
 
 sDrvFan = serial.Serial(
     port     = parameter.SER_DRV_FAN,
