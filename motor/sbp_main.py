@@ -28,7 +28,37 @@ control_lock = threading.Lock()
 
 vel_spatial = 0.0
 vel_angular = 0.0
+vel_left = 0
+vel_right = 0
 vel_fan = 0.0
+
+WHEEL_CIRCUMFERENCE = WHEEL_RADIUS * 2.0 * math.pi
+WHEEL_ARC_PER_DEGREE = WHEEL_CIRCUMFERENCE / 360.0
+INV_WHEEL_ARC_PER_DEGREE = 1.0 / WHEEL_ARC_PER_DEGREE
+# DRONE_CIRCUMFERENCE = WHEEL_DISTANCE * math.pi
+# DRONE_ARC_PER_DEGREE = DRONE_CIRCUMFERENCE / 360.0
+
+def mps2dps(meterPerSec):
+    '''
+    Meter per second to Degrees per second
+
+    arguments:
+        [float] meterPerSec
+    return:
+        [float] degreePerSec
+    '''
+    return meterPerSec * INV_WHEEL_ARC_PER_DEGREE
+
+def angular2mps(angularPerSec):
+    '''
+    Angular per second to Meter per second
+
+    arguments:
+        [float] angularPerSec
+    return:
+        [float] meterPerSec
+    '''
+    return angularPerSec * WHEEL_DISTANCE
 
 sDrvFan = serial.Serial(
     port     = parameter.SER_DRV_FAN,
@@ -53,10 +83,19 @@ else:
 def cmd_vel_callback(data):
     global vel_spatial
     global vel_angular
+    global vel_left
+    global vel_right
     # rospy.loginfo(rospy.get_caller_id() + " I heard %s", data.linear.x)
     if vel_spatial != data.linear.x or vel_angular != data.angular.z:
         vel_spatial = data.linear.x
         vel_angular = data.angular.z
+        vel_diff = angular2mps(vel_angular) * 0.5
+        left_val = int(mps2dps(-vel_spatial + vel_diff))
+        right_val = int(mps2dps(vel_spatial + vel_diff))
+        command_lock.acquire()
+        vel_left = left_val
+        vel_right = right_val
+        command_lock.release()
         print("Cmd: %f %f\r\n" % (vel_spatial, vel_angular))
 
 
@@ -185,8 +224,6 @@ class Key(threading.Thread):
         self.name = "emergency_key"
         self.time_step = time_step
         self.time_init = time.time()
-        self.vel_spatial = 0
-        self.vel_angular = 0
 
     def run(self):
         '''
@@ -280,8 +317,8 @@ if __name__ == "__main__":
                 time_past = time.time() - time_init
 
                 command_lock.acquire()
-                left_val = int(300*(-vel_spatial + vel_angular))
-                right_val = int(300*(vel_spatial + vel_angular))
+                left_val = vel_left
+                right_val = vel_right
                 command_lock.release()
 
                 control_lock.acquire()
