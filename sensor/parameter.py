@@ -24,12 +24,12 @@ IMU_FRAME_ID = "link_imu"
 
 ## Sonar
 ## http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Range.html
-SONAR_T_FIELD_OF_VIEW = 0.785398 # 1.0472 # 60 degrees (full of arc)
-SONAR_B_FIELD_OF_VIEW = 0.785398 # 1.22173 # 70 degrees (full of arc)
+SONAR_T_FIELD_OF_VIEW = 1.0472 # 60 degrees (full of arc)
+SONAR_B_FIELD_OF_VIEW = 1.22173 # 70 degrees (full of arc)
 SONAR_T_MIN_RANGE = 0.03
 SONAR_B_MIN_RANGE = 0.03
-SONAR_T_MAX_RANGE = 0.50 ## 0.30
-SONAR_B_MAX_RANGE = 0.20 ## 0.15
+SONAR_T_MAX_RANGE = 0.30
+SONAR_B_MAX_RANGE = 0.15
 
 ## Serial Communication Parameter ##
 
