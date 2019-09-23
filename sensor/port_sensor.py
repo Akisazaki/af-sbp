@@ -182,23 +182,32 @@ def on_sonar(id, range):
     msg = Range()
     msg.header.stamp = rospy.Time.now()
     msg.range = range
+    fieldOfViewTable = parameter.SONAR_T_FIELD_OF_VIEWS
     if id == 0:
         sonar_seq += 1
         msg.header.seq = sonar_seq
         msg.header.frame_id = parameter.SONAR_T_FRAME_ID
-        msg.field_of_view = parameter.SONAR_T_FIELD_OF_VIEW
+        # msg.field_of_view = parameter.SONAR_T_FIELD_OF_VIEW
         msg.min_range = parameter.SONAR_T_MIN_RANGE
         msg.max_range = parameter.SONAR_T_MAX_RANGE
         sonar_pub.publish(msg)
 
     else:
+        fieldOfViewTable = parameter.SONAR_B_FIELD_OF_VIEWS
         sonar1_seq += 1
         msg.header.seq = sonar1_seq
         msg.header.frame_id = parameter.SONAR_B_FRAME_ID
-        msg.field_of_view = parameter.SONAR_B_FIELD_OF_VIEW
+        # msg.field_of_view = parameter.SONAR_B_FIELD_OF_VIEW
         msg.min_range = parameter.SONAR_B_MIN_RANGE
         msg.max_range = parameter.SONAR_B_MAX_RANGE
         sonar1_pub.publish(msg)
+    weight = range * 0.1
+    index = round(weight, 0)
+    if index >= len(fieldOfViewTable.length) - 1:
+        msg.field_of_view = fieldOfViewTable[len(fieldOfViewTable) - 1]
+    else:
+        weight = weight % 1.0
+        msg.field_of_view = fieldOfViewTable[index] * (1.0 - weight) + fieldOfViewTable[index + 1] * weight
 
 def on_dust(id, value):
     global dust_pub
