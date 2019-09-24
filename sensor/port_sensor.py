@@ -203,7 +203,7 @@ def on_sonar(id, range):
         sonar1_pub.publish(msg)
     weight = range * 0.1
     index = round(weight, 0)
-    if index >= len(fieldOfViewTable.length) - 1:
+    if index >= len(fieldOfViewTable) - 1:
         msg.field_of_view = fieldOfViewTable[len(fieldOfViewTable) - 1]
     else:
         weight = weight % 1.0
