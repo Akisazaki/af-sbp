@@ -23,7 +23,7 @@ arming_flag = False
 rs485_lock = threading.Lock()
 
 sonar_seqs = [0, 0]
-sonar_pubs = [None, None]
+sonar_pubs = [None, None, None, None]
 sonar_frame_ids = [parameter.SONAR_T_FRAME_ID, parameter.SONAR_B_FRAME_ID]
 sonar_min_ranges = [parameter.SONAR_T_MIN_RANGE, parameter.SONAR_B_MIN_RANGE]
 sonar_max_ranges = [parameter.SONAR_T_MAX_RANGE, parameter.SONAR_B_MAX_RANGE]
@@ -41,7 +41,9 @@ def listener():
     global imu_pub
     rospy.init_node('sensor_node', anonymous=True)
     sonar_pubs[0] = rospy.Publisher('sonar', Range, queue_size=1)
-    sonar_pubs[1] = rospy.Publisher('sonar1', Range, queue_size=1)
+    sonar_pubs[1] = rospy.Publisher('sonar_l', Range, queue_size=1)
+    sonar_pubs[2] = rospy.Publisher('sonar1', Range, queue_size=1)
+    sonar_pubs[3] = rospy.Publisher('sonar1_l', Range, queue_size=1)
     dust_pub = rospy.Publisher('dust', Float32, queue_size=1)
     imu_pub = rospy.Publisher('imu', Imu, queue_size=1)
     # rospy.spin()
@@ -200,8 +202,10 @@ def on_sonar(id, range):
     else:
         weight = weight % 1.0
         msg.field_of_view = fieldOfViewTable[index] * (1.0 - weight) + fieldOfViewTable[index + 1] * weight
-    
+
+    id = id * 2
     sonar_pubs[id].publish(msg)
+    sonar_pubs[id + 1].publish(msg)
 
 
 def on_dust(id, value):
