@@ -22,10 +22,13 @@ arming_flag = False
 
 rs485_lock = threading.Lock()
 
-sonar_seq = 0
-sonar1_seq = 0
-sonar_pub = None
-sonar1_pub = None
+sonar_seqs = [0, 0]
+sonar_pubs = [None, None]
+sonar_frame_ids = [SONAR_T_FRAME_ID, SONAR_B_FRAME_ID]
+sonar_min_ranges = [SONAR_T_MIN_RANGE, SONAR_B_MIN_RANGE]
+sonar_max_ranges = [SONAR_T_MAX_RANGE, SONAR_B_MAX_RANGE]
+sonar_field_of_views = [SONAR_T_FIELD_OF_VIEWS, SONAR_B_FIELD_OF_VIEWS]
+
 dust_pub  = None
 imu_seq = 0
 imu_pub = None
@@ -37,23 +40,21 @@ def listener():
     global dust_pub
     global imu_pub
     rospy.init_node('sensor_node', anonymous=True)
-    sonar_pub = rospy.Publisher('sonar', Range, queue_size=1)
-    sonar1_pub = rospy.Publisher('sonar1', Range, queue_size=1)
+    sonar_pubs[0] = rospy.Publisher('sonar', Range, queue_size=1)
+    sonar_pubs[1] = rospy.Publisher('sonar1', Range, queue_size=1)
     dust_pub = rospy.Publisher('dust', Float32, queue_size=1)
     imu_pub = rospy.Publisher('imu', Imu, queue_size=1)
     # rospy.spin()
 
 def dispose():
-    global sonar_pub
-    global sonar1_pub
+    global sonar_pubs
     global dust_pub
     global imu_pub
-    if None != sonar_pub:
-        sonar_pub.unregister()
-        sonar_pub = None
-    if None != sonar1_pub:
-        sonar1_pub.unregister()
-        sonar1_pub = None
+
+    for index in range(0, len(sonar_pubs)):
+        if None != sonar_pubs[index]:
+            sonar_pubs[index].unregister()
+            sonar_pubs[index] = None
     if None != dust_pub:
         dust_pub.unregister()
         dust_pub = None
@@ -174,11 +175,10 @@ def on_imu(qx,qy,qz,qw, gx,gy,gz, ax,ay,az):
 
     imu_pub.publish(msg)
 
+
 def on_sonar(id, range):
-    global sonar_pub
-    global sonar1_pub
-    global sonar_seq
-    global sonar1_seq
+    global sonar_seqs
+    global sonar_pubs
     
     if math.isinf(range) or math.isnan(range):
         return
@@ -186,24 +186,13 @@ def on_sonar(id, range):
     msg = Range()
     msg.header.stamp = rospy.Time.now()
     msg.range = range
-    fieldOfViewTable = parameter.SONAR_T_FIELD_OF_VIEWS
-    if id == 0:
-        sonar_seq += 1
-        msg.header.seq = sonar_seq
-        msg.header.frame_id = parameter.SONAR_T_FRAME_ID
-        # msg.field_of_view = parameter.SONAR_T_FIELD_OF_VIEW
-        msg.min_range = parameter.SONAR_T_MIN_RANGE
-        msg.max_range = parameter.SONAR_T_MAX_RANGE
+    fieldOfViewTable = sonar_field_of_views[id]
+    sonar_seqs[id] += 1
+    msg.header.seq = sonar_seqs[id]
+    msg.header.frame_id = sonar_frame_ids[id]
+    msg.min_range = sonar_min_ranges[id]
+    msg.max_range = sonar_max_ranges[id]
 
-    else:
-        fieldOfViewTable = parameter.SONAR_B_FIELD_OF_VIEWS
-        sonar1_seq += 1
-        msg.header.seq = sonar1_seq
-        msg.header.frame_id = parameter.SONAR_B_FRAME_ID
-        # msg.field_of_view = parameter.SONAR_B_FIELD_OF_VIEW
-        msg.min_range = parameter.SONAR_B_MIN_RANGE
-        msg.max_range = parameter.SONAR_B_MAX_RANGE
-    
     weight = range * 0.1
     index = int(round(weight, 0))
     if index >= len(fieldOfViewTable) - 1:
@@ -211,10 +200,9 @@ def on_sonar(id, range):
     else:
         weight = weight % 1.0
         msg.field_of_view = fieldOfViewTable[index] * (1.0 - weight) + fieldOfViewTable[index + 1] * weight
-    if id == 0:
-        sonar_pub.publish(msg)
-    else:
-        sonar1_pub.publish(msg)
+    
+    sonar_pubs[id].publish(msg)
+
 
 def on_dust(id, value):
     global dust_pub
@@ -222,35 +210,6 @@ def on_dust(id, value):
     dust.data = value
     dust_pub.publish(dust)
 
-def _on_receive(subscriber):
-    global sonar_pub
-    global sonar_seq
-    #sys.stdout.write('Sensor Value\r\n Sonar0: {0}\r\n Sonar1: {1}\r\n Dust: {2}\r\n'.format(subscriber.sonar, subscriber.sonar1, subscriber.dust))
-    timestamp = rospy.Time.now()
-    sonar_seq += 1
-    msg = Range()
-    msg.header.seq = sonar_seq
-    msg.header.stamp = timestamp
-    msg.header.frame_id = parameter.SONAR_FRAME_ID
-    # msg.ULTRASOUND = 1
-    # msg.INFRARED = 0
-    msg.field_of_view = parameter.SONAR_FIELD_OF_VIEW
-    msg.min_range = parameter.SONAR_MIN_RANGE
-    msg.max_range = parameter.SONAR_MAX_RANGE
-    msg.range = subscriber.sonar
-    sonar_pub.publish(msg)
-
-    msg = Range()
-    msg.header.seq = sonar_seq
-    msg.header.stamp = timestamp
-    msg.header.frame_id = parameter.SONAR_FRAME_ID
-    # msg.ULTRASOUND = 1
-    # msg.INFRARED = 0
-    msg.field_of_view = parameter.SONAR_FIELD_OF_VIEW
-    msg.min_range = parameter.SONAR_MIN_RANGE
-    msg.max_range = parameter.SONAR_MAX_RANGE
-    msg.range = subscriber.sonar1
-    sonar1_pub.publish(msg)
 
 def on_receive(subscriber):
     global dust_pub
