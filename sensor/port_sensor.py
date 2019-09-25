@@ -24,10 +24,10 @@ rs485_lock = threading.Lock()
 
 sonar_seqs = [0, 0]
 sonar_pubs = [None, None]
-sonar_frame_ids = [SONAR_T_FRAME_ID, SONAR_B_FRAME_ID]
-sonar_min_ranges = [SONAR_T_MIN_RANGE, SONAR_B_MIN_RANGE]
-sonar_max_ranges = [SONAR_T_MAX_RANGE, SONAR_B_MAX_RANGE]
-sonar_field_of_views = [SONAR_T_FIELD_OF_VIEWS, SONAR_B_FIELD_OF_VIEWS]
+sonar_frame_ids = [parameter.SONAR_T_FRAME_ID, parameter.SONAR_B_FRAME_ID]
+sonar_min_ranges = [parameter.SONAR_T_MIN_RANGE, parameter.SONAR_B_MIN_RANGE]
+sonar_max_ranges = [parameter.SONAR_T_MAX_RANGE, parameter.SONAR_B_MAX_RANGE]
+sonar_field_of_views = [parameter.SONAR_T_FIELD_OF_VIEWS, parameter.SONAR_B_FIELD_OF_VIEWS]
 
 dust_pub  = None
 imu_seq = 0
