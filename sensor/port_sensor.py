@@ -181,6 +181,7 @@ def on_sonar(id, range):
     global sonar1_seq
     
     if math.isinf(range) or math.isnan(range):
+        print "Sonar Error"
         return
     
     msg = Range()
@@ -211,7 +212,10 @@ def on_sonar(id, range):
     else:
         weight = weight % 1.0
         msg.field_of_view = fieldOfViewTable[index] * (1.0 - weight) + fieldOfViewTable[index + 1] * weight
-    sonar1_pub.publish(msg)
+    if id == 0:
+        sonar_pub.publish(msg)
+    else:
+        sonar1_pub.publish(msg)
 
 def on_dust(id, value):
     global dust_pub
