@@ -12,6 +12,7 @@ import sys
 import tty
 import termios
 import serial
+import math
 import parameter
 
 import command
@@ -179,6 +180,9 @@ def on_sonar(id, range):
     global sonar_seq
     global sonar1_seq
     
+    if math.isinf(range) or math.isnan(range):
+        return
+    
     msg = Range()
     msg.header.stamp = rospy.Time.now()
     msg.range = range
@@ -190,7 +194,6 @@ def on_sonar(id, range):
         # msg.field_of_view = parameter.SONAR_T_FIELD_OF_VIEW
         msg.min_range = parameter.SONAR_T_MIN_RANGE
         msg.max_range = parameter.SONAR_T_MAX_RANGE
-        sonar_pub.publish(msg)
 
     else:
         fieldOfViewTable = parameter.SONAR_B_FIELD_OF_VIEWS
@@ -200,7 +203,7 @@ def on_sonar(id, range):
         # msg.field_of_view = parameter.SONAR_B_FIELD_OF_VIEW
         msg.min_range = parameter.SONAR_B_MIN_RANGE
         msg.max_range = parameter.SONAR_B_MAX_RANGE
-        sonar1_pub.publish(msg)
+    
     weight = range * 0.1
     index = int(round(weight, 0))
     if index >= len(fieldOfViewTable) - 1:
@@ -208,6 +211,7 @@ def on_sonar(id, range):
     else:
         weight = weight % 1.0
         msg.field_of_view = fieldOfViewTable[index] * (1.0 - weight) + fieldOfViewTable[index + 1] * weight
+    sonar1_pub.publish(msg)
 
 def on_dust(id, value):
     global dust_pub
