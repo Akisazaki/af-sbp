@@ -202,7 +202,7 @@ def on_sonar(id, range):
         msg.max_range = parameter.SONAR_B_MAX_RANGE
         sonar1_pub.publish(msg)
     weight = range * 0.1
-    index = round(weight, 0)
+    index = int(round(weight, 0))
     if index >= len(fieldOfViewTable) - 1:
         msg.field_of_view = fieldOfViewTable[len(fieldOfViewTable) - 1]
     else:
