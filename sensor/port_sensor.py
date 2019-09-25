@@ -181,7 +181,6 @@ def on_sonar(id, range):
     global sonar1_seq
     
     if math.isinf(range) or math.isnan(range):
-        print "Sonar Error"
         return
     
     msg = Range()
