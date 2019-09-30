@@ -319,7 +319,10 @@ if __name__ == "__main__":
             print ("Error: unable to start thread")
             print e1
         
+        print ("Disposing")
         dispose()
+        print ("Dispose complete")
+        exit(0)
 
     except Exception as e2:
         print ("Error: unable to generate thread")
