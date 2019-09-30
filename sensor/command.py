@@ -95,16 +95,19 @@ class controller:
 	set a controller's configuration and execute commands
 	'''
 
-	def __init__(self, imuCallback, sonarCallback, dustCallback):
+	def __init__(self, imuCallback, rangeCallback, dustCallback, inaCallback):
 		'''
 		configure the controller's ID and control mode
 		arguments:
 			imuCallback [void (qx,qy,qz,qw, gx,gy,gz, ax,ay,az)]
-			sonarCallback [void (id, range)]
+			rangeCallback [void (type, id, range)]
+			dustCallback [void (id, dust_level)]
+			inaCallback [void (voltage, current, power)]
 		'''
 		self.imuCallback = imuCallback
-		self.sonarCallback = sonarCallback
+		self.rangeCallback = rangeCallback
 		self.dustCallback = dustCallback
+		self.inaCallback = inaCallback
 		
 		self.str_command = ''
 		self.srt_received = ""
@@ -169,6 +172,9 @@ class controller:
 			self.readNumber(),self.readNumber(),self.readNumber(),self.readNumber(), 
 			self.readNumber(),self.readNumber(),self.readNumber(), 
 			self.readNumber(),self.readNumber(),self.readNumber())
+	
+	def readINA(self):
+		self.inaCallback(self.readNumber(), self.readNumber(), self.readNumber())
 
 	def readLine(self):
 		'''
@@ -183,6 +189,8 @@ class controller:
 				if len(ch) > 0:
 					if ch == parameter.MSG_IMU:
 						self.readIMU()
+					elif ch == parameter.MSG_INA
+						self.readINA()
 					elif ch == parameter.MSG_START:
 						self.srt_received = ch
 					elif ch == parameter.MSG_END:
@@ -274,7 +282,7 @@ class controller:
 				#   ts0|0000q
 				sensor_type = out[1]
 				sensor_number = int(out[2])
-				if parameter.MSG_SONAR == sensor_type:
+				if parameter.MSG_SONAR == sensor_type or parameter.MSG_IR == sensor_type:
 					val = unpack(out, 4, 4)
 					if 0 == val:
 						val = negative_inf # in python 3 -math.inf
@@ -283,7 +291,7 @@ class controller:
 					else:	
 						val = val * 0.001
 					
-					self.sonarCallback(sensor_number, val)
+					self.rangeCallback(sensor_type, sensor_number, val)
 
 					if sensor_number == 0:
 						self.sonar = val
