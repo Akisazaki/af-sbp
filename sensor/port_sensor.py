@@ -39,10 +39,6 @@ battery_seq = 0
 battery_pub = None
 
 
-sensor_controller = None
-
-
-
 def listener():
     global sonar_pubs
     global dust_pub
@@ -86,7 +82,7 @@ def dispose():
 
 class key(threading.Thread):
 
-    def __init__(self, time_step):
+    def __init__(self, time_step, sensor_controller):
         threading.Thread.__init__(self)
         self.threadID = 0
         self.name = "emergency_key"
@@ -94,6 +90,7 @@ class key(threading.Thread):
         self.time_init = time.time()
         self.vel_spatial = 0
         self.vel_angular = 0
+        self.sensor_controller = sensor_controller
 
     def run(self):
         '''
@@ -115,7 +112,7 @@ class key(threading.Thread):
 
         printout = 'Thread ' + str(self.threadID) + ' disabled\r\n'
         sys.stdout.write(printout)
-        sensor_controller.shutdown()
+        self.sensor_controller.shutdown()
         return True
 
 
@@ -232,15 +229,14 @@ def on_ina(voltage, current, power):
 
 
 if __name__ == "__main__":
-    global sensor_controller
 
     queue = []
 
     try:
         listener()
-        set_key = key(0.005)
 
         sensor_controller = command.controller(imuCallback=on_imu, rangeCallback=on_range, dustCallback=on_dust, inaCallback=on_ina)
+        set_key = key(0.005, sensor_controller)
         # queue.append(observer_thread)
 
         try:
