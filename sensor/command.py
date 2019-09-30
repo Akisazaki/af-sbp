@@ -291,12 +291,11 @@ class controller:
 					else:	
 						val = val * 0.001
 					
-					self.rangeCallback(sensor_type, sensor_number, val)
-
 					if sensor_number == 0:
 						self.sonar = val
 					elif sensor_number == 1:
 						self.sonar1 = val
+					self.rangeCallback(sensor_type, sensor_number, val)
 					return False
 
 				elif parameter.MSG_DUST == sensor_type:
@@ -306,3 +305,8 @@ class controller:
 					return True
 		
 		return False
+
+	
+	def shutdown(self):
+		global SER
+		SER.close()

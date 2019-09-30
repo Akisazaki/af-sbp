@@ -39,6 +39,10 @@ battery_seq = 0
 battery_pub = None
 
 
+sensor_controller = None
+
+
+
 def listener():
     global sonar_pubs
     global dust_pub
@@ -80,51 +84,6 @@ def dispose():
         battery_pub = None
 
 
-class subscriber(threading.Thread):
-    '''
-    subscribe and read the sensor's state data
-    '''
-
-    def __init__(self, threadID, name, controller, time_step, on_receive):
-        '''
-        set up the subscriber
-        arguments:
-                int [thread ID], str [thread name], command.controller [target controller], float [time step]
-        '''
-
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.name = name
-        self.controller = controller
-        self.time_step = time_step
-        self.on_receive = on_receive
-        self.sonar = 0.0
-        self.sonar1 = 0.0
-        self.dust = 0.0
-
-    def run(self):
-        '''
-        run the subscriber thread
-        returns:
-                bool [terhimation without an error]
-        '''
-
-        while arming_flag:
-            rs485_lock.acquire()
-            if self.controller.receive():
-                self.dust = self.controller.dust
-                self.sonar = self.controller.sonar
-                self.sonar1 = self.controller.sonar1
-                self.on_receive(self)
-            rs485_lock.release()
-
-            time.sleep(self.time_step)
-
-        printout = 'Thread ' + str(self.threadID) + ' disabled\r\n'
-        sys.stdout.write(printout)
-        return True
-
-
 class key(threading.Thread):
 
     def __init__(self, time_step):
@@ -156,6 +115,7 @@ class key(threading.Thread):
 
         printout = 'Thread ' + str(self.threadID) + ' disabled\r\n'
         sys.stdout.write(printout)
+        sensor_controller.shutdown()
         return True
 
 
@@ -270,12 +230,9 @@ def on_ina(voltage, current, power):
     msg.cell_voltage = [NaN, Nan, NaN, NaN, NaN, NaN]
     battery_pub.publish(msg)
 
-def on_receive(subscriber):
-    global dust_pub
-    dust_pub.publish(subscriber.dust)
-
 
 if __name__ == "__main__":
+    global sensor_controller
 
     queue = []
 
@@ -284,7 +241,6 @@ if __name__ == "__main__":
         set_key = key(0.005)
 
         sensor_controller = command.controller(imuCallback=on_imu, rangeCallback=on_range, dustCallback=on_dust, inaCallback=on_ina)
-        # observer_thread = subscriber(1, "observer", sensor_controller, 0.05, on_receive)
         # queue.append(observer_thread)
 
         try:
