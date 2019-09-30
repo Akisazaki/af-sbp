@@ -189,7 +189,7 @@ class controller:
 				if len(ch) > 0:
 					if ch == parameter.MSG_IMU:
 						self.readIMU()
-					elif ch == parameter.MSG_INA
+					elif ch == parameter.MSG_INA:
 						self.readINA()
 					elif ch == parameter.MSG_START:
 						self.srt_received = ch
