@@ -49,7 +49,7 @@ IR_FRAMES = ["link_ir_front"]
 SER_BAUDRATE = 115200
 
 ## IF RASPBERRY_PI
-SER_DEVICE = "/dev/ttyAMA0"
+SER_DEVICE = "/dev/ttyUSB1"
 ## ELSE
 # SER_DEVICE = "/dev/ttyUSB1"
 ## END_IF
