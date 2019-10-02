@@ -221,10 +221,10 @@ def on_ina(voltage, current, power):
     msg.current = current  * 0.001
     msg.percentage = max(min((voltage * 0.001 - 18.8) / 25.1, 1.0), 0.0)
     # === Constant values === 
-    msg.design_capacity = 4
-    msg.power_supply_technology = msg.POWER_SUPPLY_TECHNOLOGY_LIPO
-    msg.present = True
-    msg.cell_voltage = [None, None, None, None, None, None]
+    # msg.design_capacity = 4
+    # msg.power_supply_technology = msg.POWER_SUPPLY_TECHNOLOGY_LIPO
+    # msg.present = True
+    # msg.cell_voltage = [None, None, None, None, None, None]
     battery_pub.publish(msg)
 
 
